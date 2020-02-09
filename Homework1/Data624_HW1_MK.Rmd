@@ -1,0 +1,157 @@
+---
+title: "Data 624 - Home Work 1"
+author: "Murali  Kunissery"
+date: "2/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE, warnings=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Predictive Analytics Exercise
+
+Use the help function to explore what the series gold, woolyrnq and gas represent.
+
+a. Use autoplot() to plot each of these in separate plots.
+b. What is the frequency of each series? Hint: apply the frequency() function.
+c. Use which.max() to spot the outlier in the gold series. Which observation was it?
+:
+
+```{r message=FALSE}
+library(fpp2)
+```
+
+**gold : Daily** morning gold prices in US dollars. 1 January 1985 – 31 March 1989.  
+**woolyrnq : Quarterly** production of woollen yarn in Australia: tonnes. Mar 1965 – Sep 1994.  
+**gas :  Monthly** Australian gas production: 1956–1995.  
+
+
+## Question 2.1
+
+You can also embed plots, for example:
+
+```{r gold}
+#autoplot(gold[,"Economy.Class"]) +
+  #ggtitle("Economy class passengers: Melbourne-Sydney") +
+  #xlab("Year") +
+  #ylab("Thousands")
+autoplot(gold) + ggtitle("Gold Price History") + xlab("Days") + ylab("$USD")
+autoplot(woolyrnq) + ggtitle("Wool Price History") + xlab("Year") + ylab("Tonnes")
+autoplot(gas) + ggtitle("Gas Price History") + xlab("Year") + ylab("Bcf")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r freq}
+au_freq <- frequency(gold)
+wool_freq <- frequency(woolyrnq)
+gas_freq <- frequency(gas)
+goldmax <- which.max(gold)
+
+
+```
+
+```{r results, echo=FALSE}
+print(paste0("The frequency for the gold time series data is: ", au_freq))
+print(paste0("The frequency for the wool time series data is: ", wool_freq))
+print(paste0("The frequency for the gas time series data is: ", gas_freq))
+print(paste0("The gold outlier in the gold time series is : ", goldmax, "."))
+```
+
+
+## Question 2.2
+Download the file tute1.csv from the book website, open it in Excel (or some other spreadsheet application), and   review its contents. You should find four columns of information. Columns B through D each contain a quarterly series,   labelled Sales, AdBudget and GDP. Sales contains the quarterly sales for a small company over the period 1981-2005.   AdBudget is the advertising budget and GDP is the gross domestic product. All series have been adjusted for inflation.
+
+
+a.  read the data into R :  
+```{r q2.2.a}
+tute1 <- read.csv("tute1.csv", header=TRUE)
+View(tute1)
+```
+
+b.  Convert the data to time series :  
+```{r q2.2.b}
+mytimeseries <- ts(tute1[,-1], start=1981, frequency=4)
+```
+
+c.  Construct time series plots of each of the three series :  
+```{r q2.2.c}
+autoplot(mytimeseries, facets=TRUE)
+```
+
+
+
+## Question 2.3
+Download some monthly Australian retail data from the book website. These represent retail sales in various categories   for different Australian states, and are stored in a MS-Excel file.
+
+a.  read the data into R :  
+```{r q2.3.a}
+retaildata <- readxl::read_excel("retail.xlsx", skip=1)
+View(retaildata)
+```
+b.  Select one of the time series as follows (but replace the column name with your own chosen column):    
+```{r q2.3.b}
+myts <- ts(retaildata[,"A3349872X"],frequency=12, start=c(1982,4))
+```
+c. Explore your chosen retail time series using the following functions:  
+```{r q2.3.c}
+autoplot(myts) + ggtitle("Turnover  New South Wales Other retailing Time Series") + xlab("Year") + ylab("sales")
+ggseasonplot(myts, polar = TRUE)
+ggsubseriesplot(myts)
+gglagplot(myts)
+```
+
+
+
+## Question 2.6
+Use the following graphics functions: autoplot(), ggseasonplot(), ggsubseriesplot(), gglagplot(), ggAcf()   
+and explore features from the following time series: hsales, usdeaths, bricksq, sunspotarea, gasoline.
+```{r q2.6.a}
+autoplot(hsales)
+ggseasonplot(hsales)
+ggsubseriesplot(hsales)
+gglagplot(hsales)
+ggAcf(hsales)
+```
+
+**Inference on US Home Sales :** From the Seasanol plot, it is kind of evident that the home sales seems to pick up after february and slow down after september . Also looking at the timeseries, it is not very clear if there is a cyclic pattern on a peak and slow down.
+
+```{r q2.6.b}
+autoplot(usdeaths)
+ggseasonplot(usdeaths)
+ggsubseriesplot(usdeaths)
+gglagplot(usdeaths)
+ggAcf(usdeaths)
+```
+**Inference on US deaths :** From the Seasanol plot, it is kind of evident more people die in summer and it peaks in July. This is completely news to me and would be interesting to get to the details of it.
+
+```{r q2.6.c}
+autoplot(bricksq)
+ggseasonplot(bricksq)
+ggsubseriesplot(bricksq)
+gglagplot(bricksq)
+ggAcf(bricksq)
+```
+**Inference on Bricks :** From the timeseries plot, it indicates a up trend from the 50's to the mid 70's, but after that it kinds exhibits a cyclic pattern. also the seasonal plot shows a uptick in mid q1 and flattens around mid q2 and remains the same for most of the years
+
+```{r q2.6.d}
+autoplot(sunspotarea)
+#ggseasonplot(sunspotarea)
+#ggsubseriesplot(sunspotarea)
+gglagplot(sunspotarea)
+ggAcf(sunspotarea)
+```
+
+**Inference on Sunspotarea :** From the timeseries plot, it shows a cyclic trend through its time period with a few peaks and also the data is not seasonal.
+
+
+```{r q2.6.e}
+autoplot(gasoline)
+ggseasonplot(gasoline)
+#ggsubseriesplot(gasoline)
+gglagplot(gasoline)
+ggAcf(gasoline)
+```
+**Inference on gasoline :** From the timeseries plot, it shows a trend up from the 90's to 2005 and then kind of flattens and gasoline usage going down a bit. seasoanl trend shows marginal uptick during summer and comes down a bit during winter.
